@@ -22,6 +22,12 @@ contract FundMeTest is Test {
         vm.deal(USER, STARTED_BALANCE);
     }
 
+    modifier funded() {
+        vm.prank(USER);
+        fundMe.fund{value: SEND_VALUE}();
+        _;
+    }
+
     function testMinimumDollarIsFive() public {
         // console.log(fundMe.MINIMUM_USD());
         assertEq(fundMe.MINIMUM_USD(), 5e18);
@@ -37,29 +43,20 @@ contract FundMeTest is Test {
         assertEq(version, 4);
     }
 
-    function testFundsFailWithoutEnoughEth() public {
-        vm.prank(USER);
-        fundMe.fund{value: SEND_VALUE}();
+    function testFundsFailWithoutEnoughEth() public funded{
         uint256 amountFunded = fundMe.getAddressToAmountFunded(USER);
         console.log(fundMe.getAddressToAmountFunded(USER));
         assertEq(amountFunded, SEND_VALUE);
     }
 
-    function testAddFundersToArray() public {
-        vm.prank(USER);
-        fundMe.fund{value: SEND_VALUE}();
-
+    function testAddFundersToArray() public funded{
         address funder = fundMe.getFunder(0);
         assertEq(funder, USER);
     }
 
-    function testOnlyOwnerCanWithdraw() public {
-        vm.prank(USER);
-        fundMe.fund{value: SEND_VALUE}();
-
+    function testOnlyOwnerCanWithdraw() public funded{
         vm.prank(USER);
         vm.expectRevert();
         fundMe.withdraw();
-
     }
 }
