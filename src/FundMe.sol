@@ -83,6 +83,10 @@ contract FundMe {
     function getFunder(uint256 index) external view returns (address) {
         return s_funders[index];
     }
+
+    function getOwner() external view returns (address) {
+        return i_owner;
+    }
 }
 // Concepts we didn't cover yet (will cover in later sections)
 // 1. Enum
